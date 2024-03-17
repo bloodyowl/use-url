@@ -1,9 +1,9 @@
-# @bloodyowl/use-url
+# bloody-use-url
 
 > A simple router for React applications
 
 ```tsx
-import { useUrl, route } from "@bloodyowl/use-url";
+import { useUrl, route } from "bloody-use-url";
 import { match } from "ts-pattern";
 
 const App = () => {
@@ -24,7 +24,7 @@ const App = () => {
 ## Installation
 
 ```console
-$ yarn add @bloodyowl/use-url ts-pattern
+$ yarn add bloody-use-url ts-pattern
 ```
 
 ## API

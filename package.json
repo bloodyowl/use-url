@@ -1,5 +1,5 @@
 {
-  "name": "@bloodyowl/use-url",
+  "name": "bloody-use-url",
   "version": "0.1.1",
   "license": "MIT",
   "description": "A simple Router for your TypeScript React applications",

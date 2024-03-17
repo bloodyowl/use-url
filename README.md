@@ -17,7 +17,8 @@ const App = () => {
         <h1>{`User ${userId}`}</h1>
         <UserDetails path={rest} />
       </>
-    ));
+    ))
+    .otherwise(() => <h1>Not found</h1>);
 };
 ```
 
@@ -111,7 +112,7 @@ Generates a pattern to be consumed by [ts-pattern](https://github.com/gvergnaud/
 - Route params like `:paramName` are selected.
 - Rest params like `*` are selected as `rest`.
 
-```ts
+```tsx
 return (
   match(url.path)
     .with(route("/"), () => <h1>{`Home`}</h1>)
@@ -123,6 +124,7 @@ return (
         <UserDetails path={rest} />
       </>
     ))
+    .otherwise(() => <h1>Not found</h1>);
 );
 ```
 

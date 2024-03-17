@@ -62,7 +62,7 @@ push("/users/bloodyowl");
 Replaces the page URL
 
 ```tsx
-push("/users/bloodyowl");
+replace("/users/bloodyowl");
 ```
 
 ### getUrl()

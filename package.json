@@ -1,6 +1,6 @@
 {
   "name": "@bloodyowl/use-url",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "description": "A simple Router for your TypeScript React applications",
   "author": "Matthias Le Brun <bloodyowl@icloud.com>",

@@ -14,7 +14,7 @@
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && microbundle -f cjs,es",
+    "build": "yarn clean && microbundle -f cjs,es --tsconfig tsconfig.build.json",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "example": "vite example",

@@ -161,7 +161,7 @@ export const replace = (to: string | URL) => {
   }
 };
 
-export type SplitSegments<Value extends string> =
+type SplitSegments<Value extends string> =
   Value extends `${infer Head}/${infer Tail}`
     ? Head extends ""
       ? SplitSegments<Tail>
@@ -170,7 +170,7 @@ export type SplitSegments<Value extends string> =
       ? []
       : [Value];
 
-export type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
+type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
   ? [
       ...(Head extends `:${infer Name}`
         ? [Chainable<SelectP<Name, "select">>]

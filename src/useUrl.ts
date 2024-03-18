@@ -4,7 +4,6 @@ import {
   useContext,
   useEffect,
   useId,
-  useMemo,
   useSyncExternalStore,
 } from "react";
 import { P } from "ts-pattern";
@@ -161,16 +160,18 @@ export const replace = (to: string | URL) => {
   }
 };
 
-type SplitSegments<Value extends string> =
+// Turns a pathname string into an array of segments
+export type ToSegments<Value extends string> =
   Value extends `${infer Head}/${infer Tail}`
     ? Head extends ""
-      ? SplitSegments<Tail>
-      : [Head, ...SplitSegments<Tail>]
+      ? ToSegments<Tail>
+      : [Head, ...ToSegments<Tail>]
     : Value extends ""
       ? []
       : [Value];
 
-type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
+// Turns a pathname string into a ts-pattern pattern
+export type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
   ? [
       ...(Head extends `:${infer Name}`
         ? [Chainable<SelectP<Name, "select">>]
@@ -187,9 +188,7 @@ type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
  * @param path the path with params
  * @returns the ts-pattern pattern
  */
-export const route = <T extends string>(
-  path: T
-): ToPattern<SplitSegments<T>> => {
+export const route = <T extends string>(path: T): ToPattern<ToSegments<T>> => {
   // @ts-expect-error Yeah, this is messed up
   return parsePathname(path).reduce((acc, segment) => {
     return [
@@ -200,5 +199,5 @@ export const route = <T extends string>(
           ? P.array(P.select("rest"))
           : [segment]),
     ];
-  }, []) as unknown as ToPattern<SplitSegments<T>>;
+  }, []) as unknown as ToPattern<ToSegments<T>>;
 };

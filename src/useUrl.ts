@@ -181,6 +181,7 @@ type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
     ]
   : [];
 
+const cache = new Map<string, unknown>();
 /**
  * Create a Pattern for ts-pattern to match a URL path
  *
@@ -190,8 +191,11 @@ type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
 export const route = <T extends string>(
   path: T
 ): ToPattern<SplitSegments<T>> => {
+  if (cache.has(path)) {
+    return cache.get(path) as unknown as ToPattern<SplitSegments<T>>;
+  }
   // @ts-expect-error Yeah, this is messed up
-  return parsePathname(path).reduce((acc, segment) => {
+  const pattern = parsePathname(path).reduce((acc, segment) => {
     return [
       ...acc,
       ...(segment.startsWith(":")
@@ -201,4 +205,6 @@ export const route = <T extends string>(
           : [segment]),
     ];
   }, []) as unknown as ToPattern<SplitSegments<T>>;
+  cache.set(path, pattern);
+  return pattern;
 };

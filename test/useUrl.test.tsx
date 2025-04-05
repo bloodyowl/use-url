@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { match, push, useUrl } from "../src/useUrl";
+import { route, push, useUrl } from "../src/useUrl";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
@@ -19,7 +19,7 @@ const App = () => {
       </button>
 
       <main>
-        {match(url.pathname, {
+        {route(url.pathname, {
           "/": () => "Home",
           "/users": () => `Users (search: ${url.searchParams.get("search")})`,
           "/users/:userId/*": ({ userId, rest }) =>

@@ -1,4 +1,4 @@
-import { match, replace, useNavigationBlocker, useUrl } from "../src/useUrl";
+import { route, replace, useNavigationBlocker, useUrl } from "../src/useUrl";
 import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { Link } from "./Link";
@@ -25,7 +25,7 @@ const Blocker = () => {
 const SubSection = ({ path }: { path: string }) => {
   return (
     <main>
-      {match(path, {
+      {route(path, {
         "/": () => <h2>{`User home`}</h2>,
         "/friends": () => <h2>{`User friends home`}</h2>,
         "/friends/list": () => <h2>{`User friends list`}</h2>,
@@ -76,7 +76,7 @@ const App = () => {
       <Blocker />
 
       <main>
-        {match(url.pathname, {
+        {route(url.pathname, {
           "/": () => <h1>{`Home`}</h1>,
           "/users": () => (
             <>

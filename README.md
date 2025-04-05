@@ -3,12 +3,12 @@
 > React Hook for URL Matching and Subscription
 
 ```tsx
-import { useUrl, match } from "bloody-use-url";
+import { useUrl, route } from "rhums";
 
 const App = () => {
   const url = useUrl();
 
-  return match(url.pathname, {
+  return route(url.pathname, {
     "/": () => <h1>{`Home`}</h1>,
     "/users": () => <h1>{`Users`}</h1>,
     "/users/:userId/*": ({ userId, rest }) => (
@@ -96,7 +96,7 @@ Returns whether the provided path is active
 const isActive = useIsActivePath("/foo/bar");
 ```
 
-### match(path, config)
+### route(path, config)
 
 Matches the pathname to the config
 
@@ -104,7 +104,7 @@ Matches the pathname to the config
 - Rest params like `*` are selected as `rest`.
 
 ```tsx
-match(url.pathname, {
+route(url.pathname, {
   "/": () => <h1>{`Home`}</h1>,
   "/users": () => <h1>{`Users`}</h1>,
   "/users/:userId/*": ({ userId, rest }) => (

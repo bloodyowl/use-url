@@ -1,31 +1,31 @@
-# bloody-use-url
+# rhums
 
-> A simple router for React applications
+> React Hook for URL Matching and Subscription
 
 ```tsx
-import { useUrl, route } from "bloody-use-url";
-import { match } from "ts-pattern";
+import { useUrl, match } from "bloody-use-url";
 
 const App = () => {
   const url = useUrl();
 
-  return match(url.path)
-    .with(route("/"), () => <h1>{`Home`}</h1>)
-    .with(route("/users"), () => <h1>{`Users`}</h1>)
-    .with(route("/users/:userId/*"), ({ userId, rest }) => (
+  return match(url.pathname, {
+    "/": () => <h1>{`Home`}</h1>,
+    "/users": () => <h1>{`Users`}</h1>,
+    "/users/:userId/*": ({ userId, rest }) => (
       <>
         <h1>{`User ${userId}`}</h1>
         <UserDetails path={rest} />
       </>
-    ))
-    .otherwise(() => <h1>Not found</h1>);
+    ),
+    _: () => <h1>Not found</h1>,
+  });
 };
 ```
 
 ## Installation
 
 ```console
-$ yarn add bloody-use-url ts-pattern
+$ yarn add bloody-use-url
 ```
 
 ## API
@@ -38,16 +38,7 @@ Hook to get the current URL:
 const url = useUrl();
 ```
 
-The returned value has the following type:
-
-```tsx
-type Url = {
-  path: string[];
-  search: URLSearchParams;
-  hash: string;
-  pathname: string;
-};
-```
+The returned value is a [`URL`](https://developer.mozilla.org/en-US/docs/Web/API/URL/URL)
 
 ### push(to)
 
@@ -105,27 +96,25 @@ Returns whether the provided path is active
 const isActive = useIsActivePath("/foo/bar");
 ```
 
-### route(path)
+### match(path, config)
 
-Generates a pattern to be consumed by [ts-pattern](https://github.com/gvergnaud/ts-pattern):
+Matches the pathname to the config
 
 - Route params like `:paramName` are selected.
 - Rest params like `*` are selected as `rest`.
 
 ```tsx
-return (
-  match(url.path)
-    .with(route("/"), () => <h1>{`Home`}</h1>)
-    .with(route("/users"), () => <h1>{`Users`}</h1>)
-    // `userId` & `rest` are correctly typed
-    .with(route("/users/:userId/*"), ({ userId, rest }) => (
-      <>
-        <h1>{`User ${userId}`}</h1>
-        <UserDetails path={rest} />
-      </>
-    ))
-    .otherwise(() => <h1>Not found</h1>);
-);
+match(url.pathname, {
+  "/": () => <h1>{`Home`}</h1>,
+  "/users": () => <h1>{`Users`}</h1>,
+  "/users/:userId/*": ({ userId, rest }) => (
+    <>
+      <h1>{`User ${userId}`}</h1>
+      <UserDetails path={rest} />
+    </>
+  ),
+  _: () => <h1>Not found</h1>,
+});
 ```
 
 ## Inspirations

@@ -4,18 +4,8 @@ import {
   useContext,
   useEffect,
   useId,
-  useMemo,
   useSyncExternalStore,
 } from "react";
-import { P } from "ts-pattern";
-import { ArrayP, Chainable, SelectP } from "ts-pattern/dist/types/Pattern";
-
-type Url = {
-  path: string[];
-  search: URLSearchParams;
-  hash: string;
-  pathname: string;
-};
 
 /**
  * `watchUrl` lets to subscribe to URL changes
@@ -23,7 +13,7 @@ type Url = {
  * @param func: callback to run when URL changes, receives the new URL
  * @returns `unwatch` function
  */
-export const watchUrl = (func: (url: Url) => void) => {
+export const watchUrl = (func: (url: URL) => void) => {
   const onChange = () => {
     func(getUrl());
   };
@@ -34,12 +24,9 @@ export const watchUrl = (func: (url: Url) => void) => {
 };
 
 let lastLocation: string | undefined;
-let lastUrl: Url | undefined;
+let lastUrl: URL | undefined;
 
-const parsePathname = (pathname: string) =>
-  pathname === "/" ? [] : pathname.slice(1).split("/");
-
-export const getUrl = (serverUrl?: string): Url => {
+export const getUrl = (serverUrl?: string): URL => {
   const currentLocation = serverUrl ?? window.location.href;
 
   // Memoizes last URL as expected by useSyncExternalStore
@@ -48,17 +35,11 @@ export const getUrl = (serverUrl?: string): Url => {
   }
 
   const parsedUrl = new URL(currentLocation);
-  const pathname = parsedUrl.pathname;
-  const hash = parsedUrl.hash;
-  const url = {
-    path: parsePathname(pathname),
-    search: parsedUrl.searchParams,
-    hash: hash === "#" ? "" : hash.slice(1),
-    pathname,
-  };
+
   lastLocation = currentLocation;
-  lastUrl = url;
-  return url;
+  lastUrl = parsedUrl;
+
+  return parsedUrl;
 };
 
 const dispatchPopState = () => {
@@ -171,40 +152,62 @@ type SplitSegments<Value extends string> =
       : [Value];
 
 type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
-  ? [
-      ...(Head extends `:${infer Name}`
-        ? [Chainable<SelectP<Name, "select">>]
-        : Head extends "*"
-          ? ArrayP<unknown, Chainable<SelectP<"rest", "select">>>[]
-          : [Head]),
-      ...ToPattern<Tail>,
-    ]
-  : [];
+  ? (Head extends `:${infer Name}`
+      ? Record<Name, string>
+      : Head extends "*"
+        ? Record<"rest", string>
+        : Record<never, never>) &
+      ToPattern<Tail>
+  : Record<never, never>;
 
-const cache = new Map<string, unknown>();
-/**
- * Create a Pattern for ts-pattern to match a URL path
- *
- * @param path the path with params
- * @returns the ts-pattern pattern
- */
-export const route = <T extends string>(
-  path: T
-): ToPattern<SplitSegments<T>> => {
-  if (cache.has(path)) {
-    return cache.get(path) as unknown as ToPattern<SplitSegments<T>>;
+type MatchConfig<T extends string> = {
+  [Key in T]: (value: ToPattern<SplitSegments<Key>>) => unknown;
+} & { _: () => unknown };
+
+export const match = <S extends string, T extends MatchConfig<S>>(
+  url: string,
+  config: T
+): {
+  [Key in keyof T]: ReturnType<T[Key]>;
+}[keyof T] => {
+  const pathnameSegments = url === "/" ? [] : url.slice(1).split("/");
+
+  const defaultCase = config._;
+  for (const [pattern, handler] of Object.entries(config)) {
+    const patternSegments = pattern === "/" ? [] : pattern.slice(1).split("/");
+
+    let index = -1;
+    let params: Record<string, string> = {};
+    let matches = true;
+    const length = Math.max(patternSegments.length, pathnameSegments.length);
+    while (++index < length) {
+      const patternSegment = patternSegments[index];
+      if (patternSegment == null) {
+        matches = false;
+        break;
+      }
+
+      if (patternSegment === "*" && index === patternSegments.length - 1) {
+        params.rest = "/" + pathnameSegments.slice(index).join("/");
+        break;
+      }
+      const pathnameSegment = pathnameSegments[index];
+      if (patternSegment.charAt(0) === ":" && pathnameSegment != null) {
+        params[patternSegment.slice(1)] = pathnameSegment;
+        continue;
+      }
+      if (patternSegment !== pathnameSegment) {
+        matches = false;
+        break;
+      }
+    }
+
+    if (matches) {
+      // @ts-expect-error
+      return handler(params);
+    }
   }
-  // @ts-expect-error Yeah, this is messed up
-  const pattern = parsePathname(path).reduce((acc, segment) => {
-    return [
-      ...acc,
-      ...(segment.startsWith(":")
-        ? [P.select(segment.slice(1))]
-        : segment === "*"
-          ? P.array(P.select("rest"))
-          : [segment]),
-    ];
-  }, []) as unknown as ToPattern<SplitSegments<T>>;
-  cache.set(path, pattern);
-  return pattern;
+
+  // @ts-expect-error
+  return defaultCase();
 };

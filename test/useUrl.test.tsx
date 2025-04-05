@@ -1,6 +1,5 @@
-import { P, match } from "ts-pattern";
 import { expect, test } from "vitest";
-import { push, useUrl } from "../src/useUrl";
+import { match, push, useUrl } from "../src/useUrl";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";
@@ -20,15 +19,13 @@ const App = () => {
       </button>
 
       <main>
-        {match(url.path)
-          .with([], () => `Home`)
-          .with(["users"], () => `Users (search: ${url.search.get("search")})`)
-          .with(
-            ["users", P.select("userId"), ...P.array(P.select("rest"))],
-            ({ userId, rest }) =>
-              `User ${userId} (rest: ${JSON.stringify(rest)})`
-          )
-          .otherwise(() => `Not found`)}
+        {match(url.pathname, {
+          "/": () => "Home",
+          "/users": () => `Users (search: ${url.searchParams.get("search")})`,
+          "/users/:userId/*": ({ userId, rest }) =>
+            `User ${userId} (rest: ${JSON.stringify(rest)})`,
+          _: () => `Not found`,
+        })}
       </main>
     </div>
   );
@@ -45,11 +42,11 @@ test("Router", async () => {
   );
 
   await userEvent.click(screen.getByText("Go to user"));
-  expect(screen.getByRole("main")).toHaveTextContent(`User 1234 (rest: [])`);
+  expect(screen.getByRole("main")).toHaveTextContent(`User 1234 (rest: "/")`);
 
   await userEvent.click(screen.getByText("Go to user with deeper link"));
   expect(screen.getByRole("main")).toHaveTextContent(
-    `User 1234 (rest: ["friends","list"])`
+    `User 1234 (rest: "/friends/list")`
   );
 
   await userEvent.click(screen.getByText("Go to home"));

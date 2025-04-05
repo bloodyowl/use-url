@@ -1,5 +1,4 @@
-import { match } from "ts-pattern";
-import { replace, route, useNavigationBlocker, useUrl } from "../src/useUrl";
+import { match, replace, useNavigationBlocker, useUrl } from "../src/useUrl";
 import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { Link } from "./Link";
@@ -23,14 +22,15 @@ const Blocker = () => {
   );
 };
 
-const SubSection = ({ path }: { path: string[] }) => {
+const SubSection = ({ path }: { path: string }) => {
   return (
     <main>
-      {match(path)
-        .with(route("/"), () => <h2>{`User home`}</h2>)
-        .with(route("/friends"), () => <h2>{`User friends home`}</h2>)
-        .with(route("/friends/list"), () => <h2>{`User friends list`}</h2>)
-        .otherwise(() => `Not found`)}
+      {match(path, {
+        "/": () => <h2>{`User home`}</h2>,
+        "/friends": () => <h2>{`User friends home`}</h2>,
+        "/friends/list": () => <h2>{`User friends list`}</h2>,
+        _: () => `Not found`,
+      })}
     </main>
   );
 };
@@ -65,19 +65,25 @@ const App = () => {
         >
           Go to user with deeper link
         </Link>
+        <Link
+          href="/viewer"
+          className={({ active }) => (active ? "active" : undefined)}
+        >
+          Go to viewer
+        </Link>
       </nav>
 
       <Blocker />
 
       <main>
-        {match(url.path)
-          .with(route("/"), () => <h1>{`Home`}</h1>)
-          .with(route("/users"), () => (
+        {match(url.pathname, {
+          "/": () => <h1>{`Home`}</h1>,
+          "/users": () => (
             <>
-              <h1>{`Users (search: ${url.search.get("search")})`}</h1>
+              <h1>{`Users (search: ${url.searchParams.get("search")})`}</h1>
               <input
                 type="search"
-                value={url.search.get("search") ?? ""}
+                value={url.searchParams.get("search") ?? ""}
                 onChange={(event) => {
                   const value = event.target.value;
                   if (value === "") {
@@ -90,15 +96,23 @@ const App = () => {
                 }}
               />
             </>
-          ))
-          .with(route("/users/:userId/*"), ({ userId, rest }) => (
+          ),
+          "/users/:userId/*": ({ userId, rest }) => (
             <>
               <h1>{`User ${userId} (rest: ${JSON.stringify(rest)})`}</h1>
 
               <SubSection path={rest} />
             </>
-          ))
-          .otherwise(() => `Not found`)}
+          ),
+          "/viewer/*": ({ rest }) => (
+            <>
+              <h1>{`Viewer (rest: ${JSON.stringify(rest)})`}</h1>
+
+              <SubSection path={rest} />
+            </>
+          ),
+          _: () => `Not found`,
+        })}
       </main>
     </div>
   );

@@ -1,6 +1,6 @@
 import { AnchorHTMLAttributes, useCallback, useMemo } from "react";
 import { DetailedHTMLProps } from "react";
-import { push, useIsActivePath, useUrl } from "../src/useUrl";
+import { push, useIsActivePath } from "../src/useUrl";
 
 type AnchorProps = DetailedHTMLProps<
   AnchorHTMLAttributes<HTMLAnchorElement>,

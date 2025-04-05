@@ -1,6 +1,6 @@
 {
   "name": "rhums",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "license": "MIT",
   "description": "React Hook for URL Matching and Subscription",
   "author": "Matthias Le Brun <bloodyowl@icloud.com>",

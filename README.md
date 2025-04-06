@@ -25,7 +25,7 @@ const App = () => {
 ## Installation
 
 ```console
-$ yarn add bloody-use-url
+$ yarn add rhums
 ```
 
 ## API

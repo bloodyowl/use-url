@@ -5,14 +5,9 @@ import {
   useEffect,
   useId,
   useSyncExternalStore,
+  type ReactNode,
 } from "react";
 
-/**
- * `watchUrl` lets to subscribe to URL changes
- *
- * @param func: callback to run when URL changes, receives the new URL
- * @returns `unwatch` function
- */
 export const watchUrl = (func: (url: URL) => void) => {
   const onChange = () => {
     func(getUrl());
@@ -51,23 +46,12 @@ const ServerUrlContext = createContext<string | undefined>(undefined);
 
 export const ServerUrlProvider = ServerUrlContext.Provider;
 
-/**
- * `useUrl` return the current URL
- *
- * @returns a `Url` object
- */
 export const useUrl = () => {
   const serverUrl = useContext(ServerUrlContext);
   const url = useSyncExternalStore(watchUrl, getUrl);
   return serverUrl != undefined ? getUrl(serverUrl) : url;
 };
 
-/**
- * `useNavigationBlocker` blocks the page navigation with `confirm(message)`
- *
- * @param shouldBlock (boolean): should block the navigation
- * @param message (string): message to display to the user
- */
 export const useNavigationBlocker = (shouldBlock: boolean, message: string) => {
   const id = useId();
 
@@ -79,12 +63,6 @@ export const useNavigationBlocker = (shouldBlock: boolean, message: string) => {
   }, [shouldBlock]);
 };
 
-/**
- * `useIsActivePath` return if the provided link is active
- *
- * @param path: string
- * @returns boolean
- */
 export const useIsActivePath = (path: string) => {
   const serverUrl = useContext(ServerUrlContext);
 
@@ -160,16 +138,12 @@ type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
       ToPattern<Tail>
   : {};
 
-type MatchConfig<T extends string> = {
-  [Key in T]: (value: ToPattern<SplitSegments<Key>>) => unknown;
-} & { _: () => unknown };
-
-export const route = <const S extends string, const T extends MatchConfig<S>>(
+export const route = <Pattern extends string>(
   url: string,
-  config: T
-): {
-  [Key in keyof T]: ReturnType<T[Key]>;
-}[keyof T] => {
+  config: {
+    [Key in Pattern]: (value: ToPattern<SplitSegments<Key>>) => ReactNode;
+  } & { _: () => ReactNode }
+): ReactNode => {
   const pathnameSegments = url === "/" ? [] : url.slice(1).split("/");
 
   const defaultCase = config._;
@@ -208,6 +182,5 @@ export const route = <const S extends string, const T extends MatchConfig<S>>(
     }
   }
 
-  // @ts-expect-error
   return defaultCase();
 };

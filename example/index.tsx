@@ -1,4 +1,4 @@
-import { route, replace, useNavigationBlocker, useUrl } from "../src/rhums";
+import { route, replace, useNavigationBlocker, useUrl } from "../dist/rhums";
 import { createRoot } from "react-dom/client";
 import { useState } from "react";
 import { Link } from "./Link";

@@ -7,11 +7,12 @@
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "jsx": "react-jsx",
     "moduleResolution": "Node",
+    "outDir": "dist",
 
     "allowJs": false,
     "strict": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "declaration": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "incremental": false,

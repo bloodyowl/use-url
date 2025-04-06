@@ -4,17 +4,17 @@
   "license": "MIT",
   "description": "React Hook for URL Matching and Subscription",
   "author": "Matthias Le Brun <bloodyowl@icloud.com>",
-  "main": "dist/useUrl.js",
-  "module": "dist/useUrl.mjs",
-  "source": "src/useUrl.ts",
-  "types": "dist/useUrl.d.ts",
+  "main": "dist/rhums.js",
+  "module": "dist/rhums.mjs",
+  "source": "src/rhums.ts",
+  "types": "dist/rhums.d.ts",
   "files": [
     "LICENSE",
     "dist",
     "README.md"
   ],
   "scripts": {
-    "build": "yarn clean && microbundle -f cjs,es --tsconfig tsconfig.build.json",
+    "build": "tsc",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "example": "vite example",

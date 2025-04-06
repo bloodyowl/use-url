@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { route, push, useUrl } from "../src/useUrl";
+import { route, push, useUrl } from "../src/rhums";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom/vitest";

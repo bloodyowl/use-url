@@ -97,7 +97,7 @@ const App = () => {
               />
             </>
           ),
-          "/users/*": ({ userId, rest }) => (
+          "/users/:userId/*": ({ userId, rest }) => (
             <>
               <h1>{`User ${userId} (rest: ${JSON.stringify(rest)})`}</h1>
 
@@ -112,6 +112,15 @@ const App = () => {
             </>
           ),
           _: () => `Not found`,
+        })}
+
+        {route(url.pathname, {
+          "/": () => 1,
+          "/communities/*": (_) => 1,
+          "/events/*": () => 1,
+          "/talks/*": () => 1,
+          "/hosts/*": () => 1,
+          _: () => null,
         })}
       </main>
     </div>

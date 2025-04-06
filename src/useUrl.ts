@@ -164,7 +164,7 @@ type MatchConfig<T extends string> = {
   [Key in T]: (value: ToPattern<SplitSegments<Key>>) => unknown;
 } & { _: () => unknown };
 
-export const route = <S extends string, T extends MatchConfig<S>>(
+export const route = <const S extends string, const T extends MatchConfig<S>>(
   url: string,
   config: T
 ): {

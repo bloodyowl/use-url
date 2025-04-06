@@ -4758,9 +4758,9 @@ typescript@^4.1.3:
   integrity sha512-1FXk9E2Hm+QzZQ7z+McJiHL4NW1F2EzMu9Nq9i3zAaGqibafqYwCVU6WyWAuyQRRzOlxou8xZSyXLEN8oKj24g==
 
 typescript@^5.0.2:
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.0.2.tgz#891e1a90c5189d8506af64b9ef929fca99ba1ee5"
-  integrity sha512-wVORMBGO/FAs/++blGNeAVdbNKtIh1rbBL2EyQ1+J9lClJ93KiiKe8PmFIVdXhHcyv44SL9oglmfeSsndo0jRw==
+  version "5.8.3"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.8.3.tgz#92f8a3e5e3cf497356f4178c34cd65a7f5e8440e"
+  integrity sha512-p1diW6TqL9L07nNxvRMM7hMMw4c5XOo/1ibL4aAIGmSAt9slTE1Xgw5KWuof2uTOvCg9BY7ZRi+GaF+7sfgPeQ==
 
 ufo@^1.3.2:
   version "1.5.1"

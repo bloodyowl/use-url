@@ -156,9 +156,9 @@ type ToPattern<Segments> = Segments extends [infer Head, ...infer Tail]
       ? Record<Name, string>
       : Head extends "*"
         ? Record<"rest", string>
-        : Record<never, never>) &
+        : never) &
       ToPattern<Tail>
-  : Record<never, never>;
+  : never;
 
 type MatchConfig<T extends string> = {
   [Key in T]: (value: ToPattern<SplitSegments<Key>>) => unknown;

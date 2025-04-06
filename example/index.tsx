@@ -97,7 +97,7 @@ const App = () => {
               />
             </>
           ),
-          "/users/:userId/*": ({ userId, rest }) => (
+          "/users/*": ({ userId, rest }) => (
             <>
               <h1>{`User ${userId} (rest: ${JSON.stringify(rest)})`}</h1>
 
